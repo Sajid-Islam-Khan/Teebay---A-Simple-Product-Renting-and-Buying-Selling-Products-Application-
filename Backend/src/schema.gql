@@ -1,0 +1,90 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserEntity {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+  address: String!
+  password: String!
+  confirmPassword: String!
+}
+
+type Category {
+  id: Int!
+  name: String!
+}
+
+type Product {
+  id: Int!
+  name: String!
+  description: String!
+  price: Float!
+  rentalPrice: Float!
+  isForSale: Boolean!
+  isForRent: Boolean!
+  status: String!
+  ownerId: Int!
+  categories: [Category!]!
+}
+
+type Query {
+  getUsers: [UserEntity!]!
+  getUserById(userId: Float!): UserEntity!
+  getAllProducts: [Product!]!
+  getProductById(id: Float!): Product!
+  getProductsByOwner(ownerId: Int!): [Product!]!
+  getSoldProductsByOwner(ownerId: Int!): [Product!]!
+  getRentedProductsByOwner(ownerId: Int!): [Product!]!
+  getBoughtProductsByUser(buyerId: Int!): [Product!]!
+  getBorrowedProductsByUser(renterId: Int!): [Product!]!
+}
+
+type Mutation {
+  signup(signupInput: CreateUserInput!): String!
+  login(loginInput: LoginInput!): Float!
+  createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(id: Int!, updateProductInput: UpdateProductInput!): Product!
+  deleteProduct(id: Int!): Product!
+  buyProduct(productId: Int!, buyerId: Int!): Product!
+  rentProduct(productId: Int!, renterId: Int!, rentDuration: Int!): Product!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  address: String!
+  email: String!
+  phoneNumber: String!
+  password: String!
+  confirmPassword: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateProductInput {
+  name: String!
+  description: String!
+  price: Float!
+  rentalPrice: Float!
+  isForSale: Boolean!
+  isForRent: Boolean!
+  categories: [String!]!
+  ownerId: Int!
+}
+
+input UpdateProductInput {
+  name: String
+  description: String
+  price: Float
+  rentalPrice: Float
+  categories: [String!]
+  isForSale: Boolean
+  isForRent: Boolean
+}
