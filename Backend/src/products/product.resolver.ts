@@ -4,10 +4,18 @@ import { ProductService } from './product.service';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { Product } from './product.entity';
+import { Category } from './category.entity';
 
 @Resolver(() => Product)
 export class ProductResolver {
     constructor(private readonly productService: ProductService) { }
+
+
+    // GraphQL query for fetching categories
+    @Query(returns => [Category])
+    async categories(): Promise<Category[]> {
+        return this.productService.getCategories(); // Fetch categories from service
+    }
 
     @Mutation(() => Product)
     async createProduct(
