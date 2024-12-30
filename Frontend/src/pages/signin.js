@@ -10,11 +10,35 @@ const LOGIN_MUTATION = gql`
 
 function SignIn() {
     const [formData, setFormData] = useState({ email: '', password: '' });
+    const [errors, setErrors] = useState({ email: '', password: '' });
     const [login] = useMutation(LOGIN_MUTATION);
     const navigate = useNavigate();
 
+    const validateForm = () => {
+        const newErrors = {};
+        // Validate email
+        if (!formData.email) {
+            newErrors.email = 'Email is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Invalid email format.';
+        }
+
+        // Validate password
+        if (!formData.password) {
+            newErrors.password = 'Password is required.';
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters long.';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) return;
+
         try {
             const { data } = await login({
                 variables: { loginInput: formData },
@@ -50,6 +74,7 @@ function SignIn() {
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
                     <div>
                         <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
@@ -63,6 +88,7 @@ function SignIn() {
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
+                        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                     </div>
                     <div className="flex justify-center items-center">
                         <button
@@ -74,10 +100,11 @@ function SignIn() {
                     </div>
                 </form>
                 <div className="text-center mt-4">
-                    <p>Don't have an account?
+                    <p>Don't have an account?{' '}
                         <button
                             onClick={() => navigate('/signup')}
-                            className="text-blue-500 hover:text-blue-700">
+                            className="text-blue-500 hover:text-blue-700"
+                        >
                             Sign Up
                         </button>
                     </p>
