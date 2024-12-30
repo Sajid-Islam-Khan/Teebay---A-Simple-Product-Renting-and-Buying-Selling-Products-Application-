@@ -2,12 +2,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Product } from './product.entity';
+import { Category } from './category.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 
 @Injectable()
 export class ProductService {
     constructor(private readonly prisma: PrismaService) { }
+
+
+    // Fetch all categories
+    async getCategories(): Promise<Category[]> {
+        return this.prisma.category.findMany(); // Fetch categories from database
+    }
 
     //Method to Create Products
     async create(createProductInput: CreateProductInput): Promise<Product> {
@@ -97,8 +104,13 @@ export class ProductService {
         return updatedProduct;
     }
 
-    //Method to delete a product
     async deleteProduct(id: number): Promise<Product> {
+        // Delete associated transactions first
+        await this.prisma.transaction.deleteMany({
+            where: { productId: id },
+        });
+
+        // Then delete the product
         return this.prisma.product.delete({
             where: { id },
             include: { categories: true },
