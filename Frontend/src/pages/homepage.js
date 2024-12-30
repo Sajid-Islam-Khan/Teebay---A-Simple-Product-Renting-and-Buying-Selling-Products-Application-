@@ -14,6 +14,7 @@ const GET_ALL_PRODUCTS = gql`
       isForSale
       isForRent
       status
+      ownerId
       categories {
         name
       }
@@ -57,6 +58,10 @@ function HomePage() {
         navigate('/signin'); // Redirect to the sign-in page
     };
 
+    const handleMyProducts = () => {
+        navigate('/myproducts'); // Navigate to the My Products page
+    };
+
     const handleTransactions = () => {
         navigate('/transactions'); // Navigate to the transactions page
     };
@@ -78,8 +83,15 @@ function HomePage() {
         if (actionType === 'buy') {
             await buyProduct({ variables: { productId: selectedProductId, buyerId } });
         } else if (actionType === 'rent') {
-            if (rentDuration > 0) {
-                await rentProduct({ variables: { productId: selectedProductId, renterId: buyerId, rentDuration } });
+            const rentDurationInt = parseInt(rentDuration, 10); // Parse rentDuration as an integer
+            if (rentDurationInt > 0) {
+                await rentProduct({
+                    variables: {
+                        productId: selectedProductId,
+                        renterId: buyerId,
+                        rentDuration: rentDurationInt,
+                    },
+                });
             } else {
                 alert('Please enter a valid rent duration.');
                 return;
@@ -95,16 +107,37 @@ function HomePage() {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error fetching products</div>;
 
+    // Get the current user ID from localStorage
+    const currentUserId = parseInt(localStorage.getItem('userId'));
+
+    // Filter out products where ownerId matches the currentUserId
+    const filteredProducts = data.getAllProducts.filter(
+        (product) => product.ownerId !== currentUserId
+    );
+
+    // Sort products by status: 'AVAILABLE' first
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
+        if (a.status === 'AVAILABLE' && b.status !== 'AVAILABLE') return -1;
+        if (a.status !== 'AVAILABLE' && b.status === 'AVAILABLE') return 1;
+        return 0;
+    });
+
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Welcome to the Home Page</h1>
+                <h1 className="text-2xl font-bold">Welcome to Teebay</h1>
                 <div className="flex gap-4">
                     <button
                         onClick={handleTransactions}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
                         My Transactions
+                    </button>
+                    <button
+                        onClick={handleMyProducts}
+                        className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        My Products
                     </button>
                     <button
                         onClick={handleLogout}
@@ -116,7 +149,7 @@ function HomePage() {
             </div>
             <h2 className="text-xl font-semibold mb-4">List of All Products</h2>
             <div className="flex flex-col gap-6">
-                {data.getAllProducts.map((product) => (
+                {sortedProducts.map((product) => (
                     <div key={product.id} className="border rounded-lg p-4 shadow-md">
                         <h3 className="font-bold text-lg">{product.name}</h3>
                         <p>{product.description}</p>
@@ -166,13 +199,17 @@ function HomePage() {
                         </h3>
                         {actionType === 'rent' && (
                             <div className="mb-4">
-                                <label htmlFor="rentDuration" className="block text-sm">Enter Rent Duration (in days):</label>
+                                <label htmlFor="rentDuration" className="block text-sm">
+                                    Enter Rent Duration (in days):
+                                </label>
                                 <input
                                     type="number"
                                     id="rentDuration"
                                     value={rentDuration}
                                     onChange={(e) => setRentDuration(e.target.value)}
                                     className="border rounded px-2 py-1 w-full mt-2"
+                                    min="1"
+                                    step="1"
                                 />
                             </div>
                         )}
