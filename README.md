@@ -10,17 +10,15 @@ Tech Stack
 
 Feature Implementation
 
-1.	Landing Page (Teebay)
-   
+1.	Landing Page (Teebay)  
 Problem:
-
 The landing page should engage users and direct them to sign up or sign in to use the marketplace.
 Solution:
 •	Created a Landing Page component with the app's name and buttons for Sign Up and Sign In.
 •	These buttons navigate users to the sign-up or sign-in pages.
 •	A section explains the platform's benefits: renting, buying, and selling.
 
-3.	User Authentication (Sign-Up and Sign-In)
+2.	User Authentication (Sign-Up and Sign-In)
 Problem:
 Authentication is needed to manage personalized user features like product interactions.
 Solution:
@@ -28,7 +26,7 @@ Solution:
 •	Used basic string matching to validate user credentials against stored data in PostgreSQL.
 •	After successful login, users are redirected to the homepage or dashboard.
 
-4.	Homepage (Product Listings)
+3.	Homepage (Product Listings)
 Problem:
 The homepage should display available products for rent or sale, with options to buy or rent them.
 Solution:
@@ -40,7 +38,7 @@ o	Rent: Initiates the rental process with a specified duration.
 •	Filters out products listed by the user to prevent them from interacting with their own products.
 •	Sorted products by availability status (showing "AVAILABLE" products first).
 
-5.	My Products (User Product Management)
+4.	My Products (User Product Management)
 Problem:
 Users need to manage their own listed products for sale or rent.
 Solution:
@@ -48,7 +46,7 @@ Solution:
 •	Users can edit or delete their products.
 •	Used user ID (stored in localStorage) to fetch products associated with the current user.
 
-6.	Product Creation (Add Product Wizard)
+5.	Product Creation (Add Product Wizard)
 Problem:
 Users should be able to list their products for sale or rent easily.
 Solution:
@@ -56,14 +54,14 @@ Solution:
 •	After form submission, a GraphQL mutation (CREATE_PRODUCT) adds the new product to the database.
 •	Upon successful creation, users are redirected to their "My Products" page.
 
-7.	Transactions (Buy and Rent History)
+6.	Transactions (Buy and Rent History)
 Problem:
 Users should be able to view their transaction history for rented and purchased products.
 Solution:
 •	The TransactionsPage fetches and displays transactions linked to the logged-in user.
 •	Displays information like rented products and purchase details as well as borrowed and lent details.
 
-8.	Routing and Navigation
+7.	Routing and Navigation
 Problem:
 The app needs smooth navigation between pages like signing up, logging in, viewing products, and managing listings.
 Solution:
@@ -79,7 +77,7 @@ o	UpdateProductPage: /updateproduct
 o	AddProductWizard: /addproduct
 
 
-9.	Handling Edge Cases
+8.	Handling Edge Cases
 Problem:
 Need to handle scenarios like users trying to rent or buy their own products, or interacting with products already rented or sold.
 Solution:
@@ -87,7 +85,7 @@ Solution:
 •	Sold/Rented Products: These products show their status and disable the Rent/Buy buttons.
 •	Rental Duration Validation: Ensures users enter a valid rental duration and shows an error message if invalid.
 
-10.	Styling and User Experience
+9.	Styling and User Experience
 Problem:
 The app must be visually appealing and responsive for all devices.
 Solution:
