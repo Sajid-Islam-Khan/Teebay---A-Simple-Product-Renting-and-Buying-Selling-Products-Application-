@@ -8,6 +8,6 @@
 
 5.npm install react-toastify
 
-6.npm install apollo3-cache-persist
+6.npm install react-select
 
 7.npm start
